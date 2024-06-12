@@ -1,0 +1,17 @@
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Status completed", () => {
+    const responseJson = pm.response.json();
+    if (responseJson[0].status) {
+        pm.expect(responseJson[0].status).to.equal('completed');
+    }
+});
+
+let jsonData = pm.response.json();
+pm.test("Validar valor", function () {
+    if (jsonData.data && jsonData.data.date) {
+        pm.expect(jsonData.data.date).to.match(/^\d{2}-\d{2}-\d{4}\s\d{2}:\d{2}:d{2}$/);
+    }
+});
