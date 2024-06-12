@@ -1,3 +1,24 @@
+Para a realização deste teste, utilizei a ferramenta Postman, devido ao meu conhecimento prévio com ela ao longo da minha carreira como QA. 
+A escolha do Postman se deve à sua eficácia em testes de APIs, permitindo a criação, envio e análise de requisições HTTP de forma prática.
+
+O objetivo do teste foi validar três aspectos específicos de uma API. Para isso, o código foi estruturado para realizar as validações de forma isolada, 
+conforme solicitado. Os detalhes de cada validação são os seguintes:
+
+Validação do Código de Resposta: O primeiro teste verificou se a API retornava um código de status HTTP 200, indicando que a requisição foi bem-sucedida e o 
+servidor respondeu corretamente.
+
+Validação do Status "completed": O segundo teste verificou se as respostas retornadas pela API incluíam o status "completed". Este teste era crucial para 
+assegurar que o campo de status estava sendo retornado corretamente e refletia o estado esperado dos dados.
+
+Validação do Campo "due_on": Por fim, o terceiro teste conferiu se o campo "due_on" estava retornando as informações de data de maneira correta e no formato esperado. 
+Esta verificação foi importante para garantir que os dados de data estavam sendo tratados e formatados corretamente pela API.
+
+A escolha do Postman facilitou a execução e análise desses testes, proporcionando uma interface amigável para inspecionar as respostas da API e assegurar que todos os 
+critérios de validação foram atendidos.
+
+
+
+
 pm.test("Status code is 200", function () {
     pm.response.to.have.status(200);
 });
