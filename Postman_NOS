@@ -19,20 +19,48 @@ critérios de validação foram atendidos.
 
 
 
-pm.test("Status code is 200", function () {
+const todoSchema = {
+    type: 'object',
+    properties: {
+        id: { type: 'integer' },
+        user_id: { type: 'integer' },
+        title: { type: 'string' },
+        due_on: { type: 'string', format: 'date-time' },
+        status: { type: 'string' }
+    },
+    required: ['id', 'user_id', 'title', 'due_on', 'status']
+};
+
+pm.test("Valida o schema da resposta", () => {
+    const responseJson = pm.response.json();
+    const Ajv = require('ajv');
+    const ajv = new Ajv({ allErrors: true }); // Fixed TypeError by removing ".default"
+    const validate = ajv.compile(todoSchema);
+    responseJson.forEach(todo => {
+        const valid = validate(todo);
+        pm.expect(valid, `Erro no schema: ${JSON.stringify(validate.errors)}`).to.be.true;
+    });
+});
+
+pm.test("Valida que todos os todos estão 'completed'", () => {
+    const responseJson = pm.response.json();
+    responseJson.forEach(todo => {
+        pm.expect(todo.status, `O status do TODO com ID ${todo.id} não é 'completed'`).to.equal('completed');
+    });
+});
+
+pm.test("Valida o formato e valor do campo 'due_on'", () => {
+    const responseJson = pm.response.json();
+    responseJson.forEach(todo => {
+        const dueOn = todo.due_on;
+        pm.expect(dueOn, `Campo 'due_on' não encontrado para o TODO com ID ${todo.id}`).to.be.a('string');
+        const dueOnDate = new Date(dueOn);
+        pm.expect(isNaN(dueOnDate.getTime()), `Campo 'due_on' com valor inválido: ${dueOn}`).to.be.false;
+        pm.expect(dueOnDate, `Data 'due_on' no passado para o TODO com ID ${todo.id}`).to.be.at.least(new Date());
+    });
+});
+
+pm.test("O código de status é 200", function () {
     pm.response.to.have.status(200);
 });
 
-pm.test("Status completed", () => {
-    const responseJson = pm.response.json();
-    if (responseJson[0].status) {
-        pm.expect(responseJson[0].status).to.equal('completed');
-    }
-});
-
-let jsonData = pm.response.json();
-pm.test("Validar valor", function () {
-    if (jsonData.data && jsonData.data.date) {
-        pm.expect(jsonData.data.date).to.match(/^\d{2}-\d{2}-\d{4}\s\d{2}:\d{2}:d{2}$/);
-    }
-});
